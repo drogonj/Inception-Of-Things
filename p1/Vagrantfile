@@ -1,0 +1,34 @@
+
+username = `whoami`.strip
+
+nodes = [
+    { :hostname => username + 'S', :ip => '192.168.56.110'},
+    { :hostname => username + 'SW', :ip => '192.168.56.111'},
+]
+
+Vagrant.configure("2") do |config|
+    nodes.each do |node|
+        config.vm.define node[:hostname] do |nodeconfig|
+            nodeconfig.vm.provider "virtualbox" do |v|
+                v.name = node[:hostname]
+                v.cpus = 1
+                v.memory = 1024
+            end
+            nodeconfig.vm.box = "debian/bullseye64"
+            nodeconfig.vm.hostname = node[:hostname]
+
+            nodeconfig.vm.network "private_network", ip: node[:ip]
+            nodeconfig.ssh.insert_key = false
+
+            nodeconfig.vm.synced_folder "./shared", "/vagrant", type: "virtualbox"
+
+            if (node[:hostname] == nodes[0][:hostname])
+                # Server
+                nodeconfig.vm.provision "shell", path: "shared/setup/k3s_server_install.sh"
+            else
+                #Server Worker
+                nodeconfig.vm.provision "shell", path: "shared/setup/k3s_worker_install.sh"
+            end
+        end 
+    end
+end
