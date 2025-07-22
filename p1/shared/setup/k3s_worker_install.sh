@@ -1,35 +1,49 @@
 #!/bin/sh
 
-##### K3S_TOKEN #####
-echo "Retrieving k3s token..."
-if k3s_token=`head -n 1 /vagrant/token/token 2>/dev/null | base64` ; then
-    if [ -z "$k3s_token" ] ; then
-        echo "Token not provided / empty. Exiting..."
-        exit 1
-    else
-        echo "Token extracted successfully !"
-    fi
-else
-    echo "Failed to open/read token file. Exiting..."
+##### Configuration #####
+NODE_IP="192.168.56.111"
+MASTER_IP="192.168.56.110"
+FLANNEL_IFACE="eth1"
+K3S_TOKEN_FILE="/vagrant/token/token"
+
+##### Vérifications initiales #####
+echo "Vérification des prérequis..."
+sudo apt update -y
+sudo apt install -y curl net-tools vim
+
+##### Récupération du token #####
+echo "Lecture du token K3s..."
+if [ ! -f "$K3S_TOKEN_FILE" ]; then
+    echo "ERREUR: Fichier token introuvable à $K3S_TOKEN_FILE"
     exit 1
 fi
-echo ""
-##### Installing dependencies #####
 
-echo "Installing dependencies..."
+K3S_TOKEN=$(head -n 1 "$K3S_TOKEN_FILE")
+if [ -z "$K3S_TOKEN" ]; then
+    echo "ERREUR: Token vide ou invalide"
+    exit 1
+fi
 
-sudo apt update -y
-sudo apt install curl -y
+##### Recuperation de la configuration kube du serveur #####
+until [ -f /vagrant/k3s.yaml ]; do
+    echo "Attente de la configuration kube du serveur..."
+    sleep 5
+done
+export KUBECONFIG="/vagrant/k3s.yaml"
+echo "export KUBECONFIG=\"/vagrant/k3s.yaml\"" >> ~/.bashrc
+echo "export KUBECONFIG=\"/vagrant/k3s.yaml\"" >> /home/vagrant/.bashrc
+chown vagrant:vagrant /home/vagrant/.bashrc
 
-echo "Dependencies installed !"
-echo ""
-##### K3S Installation #####
+##### Installation K3s #####
+curl -sfL https://get.k3s.io | sh -s - \
+    agent \
+    --server "https://$MASTER_IP:6443" \
+    --node-ip "$NODE_IP" \
+    --token "$K3S_TOKEN"
 
-echo "Installing K3S..."
+##### Vérification post-install #####
+echo "Vérification de l'installation..."
+k3s kubectl get nodes -o wide
+k3s kubectl get pods -A
 
-master_ip="192.168.56.110"
-node_ip="192.168.56.111"
-
-curl -sfL https://get.k3s.io | \
-    INSTALL_K3S_EXEC="agent --server https://$master_ip:6443 --node-ip $node_ip" sh -s - \
-    --token $k3s_token
+echo "Installation terminée avec succès!"
