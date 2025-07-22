@@ -9,8 +9,8 @@ K3S_TOKEN_FILE="/vagrant/token/token"
 
 ##### Vérifications initiales #####
 echo "Vérification des prérequis..."
-sudo apt update -y
-sudo apt install -y curl net-tools vim git
+sudo apt-get update -y
+sudo apt-get install -y curl net-tools vim git
 
 ##### Récupération du token #####
 echo "Lecture du token K3s..."

@@ -7,8 +7,8 @@ K3S_TOKEN_FILE="/vagrant/token/token"
 
 ##### Vérifications initiales #####
 echo "Vérification des prérequis..."
-sudo apt update -y
-sudo apt install -y curl net-tools vim git
+sudo apt-get update -y
+sudo apt-get install -y curl net-tools vim git
 
 ##### Récupération du token #####
 echo "Lecture du token K3s..."
@@ -37,7 +37,7 @@ curl -sfL https://get.k3s.io | sh -s - \
     --token "$K3S_TOKEN"
 
 ###### Installation de K9s #####
-sudo apt install -y /vagrant/k9s_linux_amd64.deb
+sudo apt-get install -y /vagrant/k9s_linux_amd64.deb
 export KUBECONFIG="/etc/rancher/k3s/k3s.yaml"
 echo "export KUBECONFIG=\"/etc/rancher/k3s/k3s.yaml\"" >> ~/.bashrc
 echo "export KUBECONFIG=\"/etc/rancher/k3s/k3s.yaml\"" >> /home/vagrant/.bashrc

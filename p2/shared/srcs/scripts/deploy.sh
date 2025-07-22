@@ -3,7 +3,7 @@
 set -e
 
 # Namespaces
-kubectl apply -f /vagrant/srcs/namespaces/inception-of-things.yaml
+kubectl apply -f /vagrant/srcs/namespaces/iot-ns.yaml
 
 # Deployments
 kubectl apply -f /vagrant/srcs/apps/app1.yaml
