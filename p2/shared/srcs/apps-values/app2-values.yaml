@@ -1,0 +1,4 @@
+app:
+  name: app2
+  replicas: 3
+  message: "Hello from app2"

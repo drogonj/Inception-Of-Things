@@ -1,0 +1,23 @@
+namespace: inception-of-things
+
+app:
+  name: app1
+  replicas: 1
+  message: "Hello from app1"
+
+image:
+  repository: hashicorp/http-echo
+  tag: latest
+  pullPolicy: IfNotPresent
+
+service:
+  port: 80
+  targetPort: 5678
+
+resources:
+  requests:
+    cpu: "100m"
+    memory: "128Mi"
+  limits:
+    cpu: "200m"
+    memory: "256Mi"
