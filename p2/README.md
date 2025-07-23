@@ -1,24 +1,12 @@
-# Part 1
+# Part 2
 
-Setup 2 machines using Vagrant.
+Setup a single-node cluster with 3 simple applications.
 
-* Both have K3s installed
-* First one is called {`whoami`}S(erver) which is the **master node**
-* Second one is called {`whoami`}S(erver)W(orker) wich is an **agent node**
+After configuring `/etc/hosts/` to `192.168.56.110 app1.com app2.com example.com` or simply doing `curl -H "Host:app2.com" 192.168.56.110`, each app should be accessible via HTTP, showing a `Hello from app<number> - <pod-name>` message.
 
-Each VM got an given IP and can be reach via SSH without password.
+app2 has 3 replicas. Then refreshing app2.com multiples times should show differents pod names.
 
-Our **agent node** is connected to our master.
+####### More #######
 
-```
-host> vagrant up
-.................
-#Lets say my login is "bob"
-host> vagrant ssh bobS
-.................
-vagrant@bobS> kubectl get nodes -o wide
-NAME         STATUS   ROLES                  AGE   VERSION        INTERNAL-IP      EXTERNAL-IP   OS-IMAGE                         KERNEL-VERSION    CONTAINER-RUNTIME
-bobs    Ready    control-plane,master   93s   v1.32.4+k3s1   192.168.56.110   <none>        Debian GNU/Linux 11 (bullseye)   5.10.0-32-amd64   containerd://2.0.4-k3s2
-bobsw   Ready    <none>                 32s   v1.32.4+k3s1   192.168.56.111   <none>        Debian GNU/Linux 11 (bullseye)   5.10.0-32-amd64   containerd://2.0.4-k3s2
-
-```
+* K9s installed wich provide an intuitive and simple terminal's based UI to manage/see our cluster
+* Helm installed, used for Deployments and Services (Because learning a usefull tool is more fun than CTRL-C CTRL-V the same app 3 time)
