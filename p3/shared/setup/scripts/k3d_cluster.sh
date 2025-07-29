@@ -4,7 +4,7 @@ set -e
 
 ##### Création du cluster K3d #####
 echo "Création du cluster K3d..."
-k3d cluster create iot
+k3d cluster create iot --port "8888:80@loadbalancer"
 kubectl cluster-info
 
 ##### Partage du contexte kube #####
