@@ -1,0 +1,27 @@
+
+username = `whoami`.strip
+
+nodes = [
+    { :hostname => username + 'S', :ip => '192.168.56.110'},
+]
+
+Vagrant.configure("2") do |config|
+    nodes.each do |node|
+        config.vm.define node[:hostname] do |nodeconfig|
+            nodeconfig.vm.provider "virtualbox" do |v|
+                v.name = node[:hostname]
+                v.cpus = 6
+                v.memory = 14286
+            end
+            nodeconfig.vm.box = "debian/bullseye64"
+            nodeconfig.vm.hostname = node[:hostname]
+
+            nodeconfig.vm.network "private_network", ip: node[:ip]
+            nodeconfig.ssh.insert_key = false
+
+            nodeconfig.vm.synced_folder ".", "/vagrant", type: "virtualbox"
+
+            nodeconfig.vm.provision "shell", path: "scripts/main.sh"
+        end 
+    end
+end

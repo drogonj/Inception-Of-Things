@@ -1,0 +1,7 @@
+
+hostname: rancher.192.168.56.110.nip.io
+
+ingress:
+  tls:
+    source: secret
+  

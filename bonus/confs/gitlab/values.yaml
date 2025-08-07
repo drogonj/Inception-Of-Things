@@ -1,0 +1,139 @@
+# Values for Gitlab helm chart
+
+global:
+  common:
+    labels: {}
+
+  pod:
+    labels: {}
+
+  # Gitlab edition
+  edition: ce
+
+  # Domain and external IP configuration
+  hosts:
+    domain: "192.168.56.110.nip.io"
+    externalIP: "192.168.56.110"
+    https: true
+    gitlab:
+      host: gitlab.192.168.56.110.nip.io
+
+  # Redirection to my Traefik, using the iot-cert certificate
+  ingress:
+    configureCertmanager: false
+    tls:
+      enabled: true
+      secretName: iot-cert
+    class: traefik
+    annotations:
+      traefik.ingress.kubernetes.io/router.entrypoints: web,websecure
+      traefik.ingress.kubernetes.io/router.tls: "true"
+      traefik.ingress.kubernetes.io/redirect-entry-point: https
+      traefik.ingress.kubernetes.io/redirect-permanent: "true"
+
+  # Disabling unnecessary components
+  minio:
+    enabled: false
+    
+  monitoring:
+    enabled: false
+
+  appConfig:
+    migrations:
+      enabled: true
+    artifacts:
+      enabled: false
+    lfs:
+      enabled: false
+    uploads:
+      enabled: false
+    packages:
+      enabled: false
+    backups:
+      enabled: false
+
+# Disabling unnecessary components
+nginx-ingress:
+  enabled: false
+  install: false
+
+cert-manager:
+  enabled: false
+  install: false
+
+prometheus:
+  enabled: false
+  install: false
+
+gitlab-runner:
+  enabled: false
+  install: false
+
+# Configuration for Gitlab components with resource limits
+gitlab:
+  webservice:
+    resources:
+      requests:
+        memory: "2Gi"
+        cpu: "500m"
+      limits:
+        memory: "4Gi"
+        cpu: "750m"
+    ingress:
+      spec:
+        ingressClassName: traefik
+      annotations:
+        traefik.ingress.kubernetes.io/router.entrypoints: web,websecure
+        traefik.ingress.kubernetes.io/router.tls: "true"
+        traefik.ingress.kubernetes.io/redirect-entry-point: https
+        traefik.ingress.kubernetes.io/redirect-permanent: "true"
+
+  toolbox:
+    enabled: false
+    backups:
+      enabled: false
+
+  sidekiq:
+    resources:
+      requests:
+        memory: "1Gi"
+        cpu: "250m"
+      limits:
+        memory: "2Gi"
+        cpu: "500m"
+
+  gitaly:
+    resources:
+      requests:
+        memory: "300Mi"
+        cpu: "100m"
+      limits:
+        memory: "500Mi"
+        cpu: "300m"
+
+  gitlab-shell:
+    resources:
+      requests:
+        memory: "100Mi"
+        cpu: "50m"
+      limits:
+        memory: "200Mi"
+        cpu: "100m"
+
+postgresql:
+  resources:
+    requests:
+      memory: "256Mi"
+      cpu: "100m"
+    limits:
+      memory: "512Mi"
+      cpu: "300m"
+
+redis:
+  resources:
+    requests:
+      memory: "128Mi"
+      cpu: "50m"
+    limits:
+      memory: "256Mi"
+      cpu: "100m"
